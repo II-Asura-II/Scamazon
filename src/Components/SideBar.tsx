@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { UseFilterContext } from "../Context/FilterContext";
+import Capitalise from "../Utils/Capitalise";
 
 interface Product {
   category: string;
@@ -19,11 +21,18 @@ const SideBar = () => {
     "shirt",
   ]);
 
-  const Capitalise = (word: string): string => {
-    return (
-      word.charAt(0).toUpperCase() + word.slice(1, word.length).toLowerCase()
-    );
-  };
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedKeyword,
+    setSelectedKeyword,
+    selectedCategory,
+    setSelectedCategory,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+  } = UseFilterContext();
 
   useEffect(() => {
     const fetchCategorycategory = async () => {
@@ -43,25 +52,39 @@ const SideBar = () => {
   }, []);
 
   return (
-    <div className="text-sm fixed w-[25%] flex flex-col h-screen left-0 items-center">
-      <h1 className="font-bold text-2xl mb-4 text-shadow-md pt-4">Scamazon</h1>
-      <section className="flex flex-col gap-y-6">
+    <div className="text-sm fixed w-[25%] flex flex-col h-screen left-0 items-center py-4">
+      <h1 className="font-bold text-2xl mb-4 text-shadow-md">Scamazon</h1>
+      <section className="flex flex-col h-full justify-between">
         <section className="flex flex-col gap-y-2 px-4">
           <input
             className="py-1 px-2 border-1 focus:outline-none rounded-sm flex flex-1"
             type="text"
             placeholder="Search Product"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div className="flex gap-x-2">
             <input
               className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
-              type="text"
+              type="number"
               placeholder="Min"
+              value={minPrice}
+              onChange={(e) => {
+                setMinPrice(
+                  e.target.value ? Number(e.target.value) : undefined
+                );
+              }}
             />
             <input
               className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
-              type="text"
+              type="number"
               placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => {
+                setMaxPrice(
+                  e.target.value ? Number(e.target.value) : undefined
+                );
+              }}
             />
           </div>
         </section>
@@ -74,12 +97,18 @@ const SideBar = () => {
                 className="flex items-center gap-x-2 cursor-pointer py-1"
                 key={i}>
                 <input
-                  className="size-4"
+                  className="size-4 accent-black"
                   type="radio"
                   name="category"
                   id="category"
                   value={category}
-                />{" "}
+                  onClick={() =>
+                    selectedCategory === category
+                      ? setSelectedCategory("")
+                      : setSelectedCategory(category)
+                  }
+                  checked={selectedCategory === category}
+                />
                 <span>{Capitalise(category)}</span>
               </label>
             ))}
@@ -90,15 +119,32 @@ const SideBar = () => {
           <section className="flex flex-col">
             {keywords.map((keyword, i) => (
               <button
-                className="flex px-4 py-2 transition-transform hover:scale-105 duration-200 cursor-pointer hover:bg-gray-200"
-                key={i}>
+                className={`flex px-4 py-2 transition-transform hover:scale-105 duration-200 cursor-pointer  ${
+                  selectedKeyword === keyword
+                    ? "bg-black text-white hover:bg-black"
+                    : "hover:bg-gray-200"
+                }`}
+                key={i}
+                onClick={() =>
+                  selectedKeyword === keyword
+                    ? setSelectedKeyword("")
+                    : setSelectedKeyword(keyword)
+                }>
                 {Capitalise(keyword)}
               </button>
             ))}
           </section>
         </section>
-        <section className="flex flex-1 px-4">
-          <button className="bg-black text-white flex-1 py-2 rounded-sm hover:scale-105 active:scale-100 transition-transform duration-200">
+        <section className="px-4">
+          <button
+            className="w-full bg-black text-white py-2 rounded-sm hover:scale-105 active:scale-100 transition-transform duration-200"
+            onClick={() => {
+              setMinPrice(undefined);
+              setMaxPrice(undefined);
+              setSelectedCategory("");
+              setSelectedKeyword("");
+              setSearchQuery("");
+            }}>
             Reset Filters
           </button>
         </section>
