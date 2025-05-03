@@ -1,66 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UseFilterContext } from "../Context/FilterContext";
-import { Tally3 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Dot, Filter, SearchX } from "lucide-react";
 import Capitalise from "../Utils/Capitalise";
 import axios from "axios";
-
-type dimensionsShape = {
-  width: number;
-  height: number;
-  depth: number;
-};
-
-type metaShape = {
-  createdAt: string;
-  updatedAt: string;
-  barcode: string;
-  qrCode: string;
-};
-
-type reviewShape = {
-  comment: string;
-  date: string;
-  rating: number;
-  reviewerEmail: string;
-  reviewerName: string;
-};
-
-type ProductShape = {
-  availabilityStatus: string;
-  brand: string;
-  category: string;
-  description: string;
-  dimensions: dimensionsShape;
-  discountPercentage: number;
-  id: number;
-  images: string[];
-  meta: metaShape;
-  minimumOrderQuantity: number;
-  price: number;
-  rating: number;
-  returnPolicy: string;
-  reviews: reviewShape;
-  shippingInformation: string;
-  sku: string;
-  stock: number;
-  tags: string[];
-  thumbnail: string;
-  title: string;
-  warrantyInformation: string;
-  weight: number;
-};
+import ProductCard from "./ProductCard";
+import { ProductShape } from "../Types/ProductsType";
 
 const ProductDisplay = () => {
   const [products, setProducts] = useState<ProductShape[]>([]);
-
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isDropped, setIsDropped] = useState(false);
-
-  const itemsPerPage = 12;
-
+  const itemsPerPage = 15;
   const { searchQuery, selectedCategory, selectedKeyword, minPrice, maxPrice } =
     UseFilterContext();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropped(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -97,7 +67,11 @@ const ProductDisplay = () => {
       );
     }
 
-    if (maxPrice) {
+    if (minPrice && maxPrice && minPrice < maxPrice) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price <= maxPrice
+      );
+    } else if (!minPrice && maxPrice) {
       filteredProducts = filteredProducts.filter(
         (product) => product.price <= maxPrice
       );
@@ -106,53 +80,107 @@ const ProductDisplay = () => {
     if (searchQuery) {
       const searchQueryLower = searchQuery.toLowerCase();
       filteredProducts = filteredProducts.filter((product) => {
-        const { title, brand, category, } = product;
+        const { title, brand, category } = product;
+
+        const t = title === undefined ? "" : title;
+        const b = brand === undefined ? "" : brand;
+        const c = category === undefined ? "" : category;
+
         return (
-          title.toLowerCase().includes(searchQueryLower) ||
-          brand.toLowerCase().includes(searchQueryLower) ||
-          category.toLowerCase().includes(searchQueryLower)
+          t.toLowerCase().includes(searchQueryLower) ||
+          b.toLowerCase().includes(searchQueryLower) ||
+          c.toLowerCase().includes(searchQueryLower)
         );
       });
     }
 
-    console.log(filteredProducts);
+    switch (filter) {
+      case "cheap":
+        filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "expensive":
+        filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
+        break;
+      case "popular":
+        filteredProducts = filteredProducts.sort((a, b) => b.rating - a.rating);
+        break;
+      case "all":
+        filteredProducts = filteredProducts.sort((a, b) => a.id - b.id);
+        break;
+      default:
+        return filteredProducts;
+    }
+
+    return filteredProducts;
   };
 
-  getFilteredProducts();
+  const filteredProducts = getFilteredProducts();
 
   return (
-    <section className="xl:w-[55rem] lg:w-[55rem] sm:w-[40rem] xs:w-[20rem] p-4">
-      <div className="mb-4">
+    <section className="w-full h-full justify-between p-4 flex flex-col">
+      <div>
         <div className="flex flex-col sm:flex-row justify-between items-center">
-          <div className="mb-5 relative">
+          <div className="relative w-30" ref={dropdownRef}>
             <button
               onClick={() => setIsDropped(!isDropped)}
               className="p-2 rounded-full flex items-center">
-              <Tally3 viewBox="-3 0 24 24" className="mr-2" />
+              <Filter size={20} className="mr-1" />
               {filter === "all" ? "Filter" : Capitalise(filter)}
             </button>
             {isDropped && (
               <div className="absolute bg-white border border-gray-300 rounded w-full">
                 <button
-                  onClick={() => setFilter("cheap")}
-                  className="block cursor-pointer px-4 py-2 w-full text-left hover:bg-gray-200">
-                  Cheap
+                  onClick={() =>
+                    filter === "cheap" ? setFilter("all") : setFilter("cheap")
+                  }
+                  className="h-10 flex items-center justify-between cursor-pointer pl-2 w-full hover:bg-gray-200">
+                  Cheap {filter === "cheap" && <Dot size={30} />}
                 </button>
                 <button
-                  onClick={() => setFilter("expensive")}
-                  className="block cursor-pointer px-4 py-2 w-full text-left hover:bg-gray-200">
-                  Expensive
+                  onClick={() =>
+                    filter === "expensive"
+                      ? setFilter("all")
+                      : setFilter("expensive")
+                  }
+                  className="h-10 flex items-center justify-between cursor-pointer pl-2 w-full hover:bg-gray-200">
+                  Expensive {filter === "expensive" && <Dot size={30} />}
                 </button>
                 <button
-                  onClick={() => setFilter("popular")}
-                  className="block cursor-pointer px-4 py-2 w-full text-left hover:bg-gray-200">
-                  Popular
+                  onClick={() =>
+                    filter === "popular"
+                      ? setFilter("all")
+                      : setFilter("popular")
+                  }
+                  className="flex items-center justify-between cursor-pointer pl-2 h-10 w-full hover:bg-gray-200">
+                  Popular {filter === "popular" && <Dot size={30} />}
                 </button>
               </div>
             )}
           </div>
         </div>
-        <div className="grid-cols-4 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+      </div>
+      <div className="flex w-full h-full items-baseline mt-2">
+        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <p className="flex items-center gap-x-2">
+              <SearchX size={18} /> No results
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <button
+          onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}>
+          <ChevronLeft />
+        </button>
+        <p>{currentPage}</p>
+        <button onClick={() => setCurrentPage(currentPage + 1)}>
+          <ChevronRight />
+        </button>
       </div>
     </section>
   );

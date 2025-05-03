@@ -52,7 +52,7 @@ const SideBar = () => {
   }, []);
 
   return (
-    <div className="text-sm fixed w-[25%] flex flex-col h-screen left-0 items-center py-4">
+    <div className="text-sm fixed w-60 flex flex-col h-screen left-0 items-center py-4">
       <h1 className="font-bold text-2xl mb-4 text-shadow-md">Scamazon</h1>
       <section className="flex flex-col h-full justify-between">
         <section className="flex flex-col gap-y-2 px-4">
@@ -68,7 +68,7 @@ const SideBar = () => {
               className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
               type="number"
               placeholder="Min"
-              value={minPrice}
+              value={minPrice === undefined ? "" : minPrice}
               onChange={(e) => {
                 setMinPrice(
                   e.target.value ? Number(e.target.value) : undefined
@@ -79,7 +79,7 @@ const SideBar = () => {
               className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
               type="number"
               placeholder="Max"
-              value={maxPrice}
+              value={maxPrice === undefined ? "" : maxPrice}
               onChange={(e) => {
                 setMaxPrice(
                   e.target.value ? Number(e.target.value) : undefined

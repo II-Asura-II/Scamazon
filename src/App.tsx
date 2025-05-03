@@ -5,9 +5,10 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 const App = () => {
   return (
     <Router>
-      <div className="flex h-screen w-screen pl-[25%]">
+      <div
+        className="flex h-screen w-full pl-60">
         <SideBar />
-        <div>
+        <div className="w-full">
           <Routes>
             <Route path="/" element={<ProductDisplay />} />
           </Routes>
