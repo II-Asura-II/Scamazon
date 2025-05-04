@@ -1,4 +1,5 @@
 import ProductDisplay from "./Components/ProductDisplay";
+import ProductPage from "./Components/ProductPage";
 import SideBar from "./Components/SideBar";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
@@ -10,6 +11,7 @@ const App = () => {
         <div className="w-full">
           <Routes>
             <Route path="/" element={<ProductDisplay />} />
+            <Route path="/product/:id" element={<ProductPage />} />
           </Routes>
         </div>
       </div>
