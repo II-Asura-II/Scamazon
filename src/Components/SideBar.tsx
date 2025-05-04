@@ -52,12 +52,12 @@ const SideBar = () => {
   }, []);
 
   return (
-    <div className="text-sm fixed w-60 flex flex-col h-screen left-0 items-center py-4">
+    <div className="text-sm overflow-y-auto overflow-x-hidden fixed w-65 flex flex-col h-screen left-0 items-center pt-4">
       <h1 className="font-bold text-2xl mb-4 text-shadow-md">Scamazon</h1>
       <section className="flex flex-col h-full justify-between">
         <section className="flex flex-col gap-y-2 px-4">
           <input
-            className="py-1 px-2 border-1 focus:outline-none rounded-sm flex flex-1"
+            className="py-1 px-4 border-1 focus:outline-none rounded-sm flex flex-1"
             type="text"
             placeholder="Search Product"
             value={searchQuery}
@@ -65,7 +65,7 @@ const SideBar = () => {
           />
           <div className="flex gap-x-2">
             <input
-              className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
+              className="py-1 px-4 border-1 focus:outline-none rounded-sm w-1/2"
               type="number"
               placeholder="Min"
               value={minPrice === undefined ? "" : minPrice}
@@ -76,7 +76,7 @@ const SideBar = () => {
               }}
             />
             <input
-              className="py-1 px-2 border-1 focus:outline-none rounded-sm w-1/2"
+              className="py-1 px-4 border-1 focus:outline-none rounded-sm w-1/2"
               type="number"
               placeholder="Max"
               value={maxPrice === undefined ? "" : maxPrice}
@@ -137,7 +137,7 @@ const SideBar = () => {
         </section>
         <section className="px-4">
           <button
-            className="w-full bg-black text-white py-2 rounded-sm hover:scale-105 active:scale-100 transition-transform duration-200"
+            className="w-full mb-4 bg-black text-white py-2 rounded-sm hover:scale-105 active:scale-100 transition-transform duration-200"
             onClick={() => {
               setMinPrice(undefined);
               setMaxPrice(undefined);

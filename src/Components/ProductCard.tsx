@@ -3,7 +3,7 @@ import { ProductShape } from "../Types/ProductsType";
 
 const ProductCard = ({ product }: { product: ProductShape }) => {
   return (
-    <div className="flex items-center justify-center w-35 p-2">
+    <div className="flex items-center mx-auto justify-center w-35 h-45 p-2">
       <Link
         className="flex items-center flex-col"
         to={`/product/${product.id}`}>

@@ -11,7 +11,6 @@ const ProductDisplay = () => {
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isDropped, setIsDropped] = useState(false);
-  const itemsPerPage = 15;
   const { searchQuery, selectedCategory, selectedKeyword, minPrice, maxPrice } =
     UseFilterContext();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -34,9 +33,7 @@ const ProductDisplay = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      let url = `https://dummyjson.com/products/?limit=${itemsPerPage}&skip=${
-        (currentPage - 1) * itemsPerPage
-      }`;
+      let url = `https://dummyjson.com/products/?limit=0`;
 
       if (selectedKeyword) {
         url = `https://dummyjson.com/products/search?q=${selectedKeyword}`;
@@ -114,10 +111,21 @@ const ProductDisplay = () => {
     return filteredProducts;
   };
 
-  const filteredProducts = getFilteredProducts();
+  const filteredProducts = getFilteredProducts().slice(
+    (currentPage - 1) * 15,
+    currentPage * 15
+  );
+
+  const totalPages = Math.ceil(getFilteredProducts().length / 15);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
 
   return (
-    <section className="w-full h-full justify-between p-4 flex flex-col">
+    <section className="w-full p-4 min-h-screen flex flex-col justify-between">
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <div className="relative w-30" ref={dropdownRef}>
@@ -159,8 +167,8 @@ const ProductDisplay = () => {
           </div>
         </div>
       </div>
-      <div className="flex w-full h-full items-baseline mt-2">
-        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4">
+      <div className="flex w-full min-h-[85vh] items-baseline mt-2">
+        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 pb-4">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -172,13 +180,20 @@ const ProductDisplay = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-center">
+      <div className="flex gap-x-2 justify-center">
         <button
+          disabled={currentPage === 1}
+          className="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}>
           <ChevronLeft />
         </button>
-        <p>{currentPage}</p>
-        <button onClick={() => setCurrentPage(currentPage + 1)}>
+        <p className="font-semibold">{currentPage}</p>
+        <button
+          disabled={currentPage === totalPages}
+          className="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          onClick={() =>
+            currentPage < totalPages && setCurrentPage(currentPage + 1)
+          }>
           <ChevronRight />
         </button>
       </div>

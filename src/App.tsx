@@ -5,8 +5,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 const App = () => {
   return (
     <Router>
-      <div
-        className="flex h-screen w-full pl-60">
+      <div className="w-full pl-65">
         <SideBar />
         <div className="w-full">
           <Routes>
