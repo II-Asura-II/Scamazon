@@ -33,7 +33,7 @@ type ProductShape = {
   price: number;
   rating: number;
   returnPolicy: string;
-  reviews: reviewShape;
+  reviews: reviewShape[];
   shippingInformation: string;
   sku: string;
   stock: number;

@@ -112,11 +112,11 @@ const ProductDisplay = () => {
   };
 
   const filteredProducts = getFilteredProducts().slice(
-    (currentPage - 1) * 15,
-    currentPage * 15
+    (currentPage - 1) * 8,
+    currentPage * 8
   );
 
-  const totalPages = Math.ceil(getFilteredProducts().length / 15);
+  const totalPages = Math.ceil(getFilteredProducts().length / 8);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -125,7 +125,7 @@ const ProductDisplay = () => {
   }, [totalPages, currentPage]);
 
   return (
-    <section className="w-full p-4 min-h-screen flex flex-col justify-between">
+    <section className="w-full p-4 min-h-screen flex flex-col justify-between overflow-y-hidden">
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <div className="relative w-30" ref={dropdownRef}>
@@ -168,7 +168,7 @@ const ProductDisplay = () => {
         </div>
       </div>
       <div className="flex w-full min-h-[85vh] items-baseline mt-2">
-        <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 pb-4">
+        <div className="w-full grid-md grid-cols-4 pb-4 gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />

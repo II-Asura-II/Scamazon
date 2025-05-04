@@ -6,9 +6,9 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 const App = () => {
   return (
     <Router>
-      <div className="w-full pl-65">
+      <div className="w-full pl-65 h-screen">
         <SideBar />
-        <div className="w-full">
+        <div className="w-full h-full">
           <Routes>
             <Route path="/" element={<ProductDisplay />} />
             <Route path="/product/:id" element={<ProductPage />} />

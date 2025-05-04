@@ -25,3 +25,24 @@
 .no-bar::-webkit-scrollbar {
   height: 0px;
 }
+
+.grid-md {
+  display: grid;
+  gap: 1rem; /* Adjust spacing between grid items */
+}
+
+@media (max-width: 1190px) {
+  .grid-md {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns of equal width */
+  }
+}
+@media (max-width: 1025px) {
+  .grid-md {
+    grid-template-columns: repeat(2, 1fr); /* 3 columns of equal width */
+  }
+}
+@media (max-width: 770px) {
+  .grid-md {
+    grid-template-columns: repeat(1, 1fr); /* 3 columns of equal width */
+  }
+}
