@@ -124,6 +124,24 @@ const ProductDisplay = () => {
     }
   }, [totalPages, currentPage]);
 
+const getPageNumbers = () => {
+  const pages = [];
+  const maxVisiblePages = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+};
+
   return (
     <section className="w-full p-4 min-h-screen flex flex-col justify-between overflow-y-hidden">
       <div>
@@ -187,7 +205,18 @@ const ProductDisplay = () => {
           onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}>
           <ChevronLeft />
         </button>
-        <p className="font-semibold">{currentPage}</p>
+        <div className="flex gap-1 items-baseline">
+          {getPageNumbers().map((page) => (
+            <p
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`cursor-pointer  font-semibold ${
+                page !== currentPage && "text-gray-500 text-[0.8rem]"
+              }`}>
+              {page}
+            </p>
+          ))}
+        </div>
         <button
           disabled={currentPage === totalPages}
           className="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
